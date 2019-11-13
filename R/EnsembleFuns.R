@@ -21,3 +21,39 @@ Comb_parallel <- function(multi_est, weights){
   # Return the parallel combined result
   return(comb_out)
 }
+
+
+#' Function that gets results from weak model
+#'
+#' @param fweak - function that generates estimate from weak model based on input
+#' @param parallel - logical value, true if its results will be combined in parallel
+#' @param data - list of data that fweak need
+#'
+#' @return outputs Comb_parallel(multi_est, weights)
+#' @export
+#'
+#' @examples
+#' fweak <- function(x, y){
+#'   lm(y ~ x)$coefficients
+#' }
+#' data <- list(x = matrix(rnorm(1000), 200, 5))
+#' parallel <- TRUE
+#' data$y <- data$x %*% rnorm(5)
+#' fit_model(fweak, parallel, data)
+fit_model <- function(fweak, parallel, data){
+  # When fweak's results will be combined in parallel
+  if(parallel){
+    x <- data$x; y <- data$y
+    fweak_value <- fweak(x, y)
+  }else{
+    # When fweak's results will be combined in series
+    x <- data$x; y <- data$y; last_est <- data$last_est
+    fweak_value <- fweak(x, y, last_est)
+  }
+  # Return the new fitted value
+  return(fweak_value)
+}
+
+
+
+
