@@ -39,7 +39,8 @@ bagging_fit1 <- function(fweak, data){
 #' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
 #' data$y <- data$x %*% rnorm(5)
-#' bagging_fit1(fweak, data)
+#' model_num <- 100; reg <- T
+#' bagging(fweak, data, model_num, reg)
 bagging <- function(fweak, data, model_num, reg){
   # Initialize multi_est for storing the fitting results of weak models
   multi_est <- list()
