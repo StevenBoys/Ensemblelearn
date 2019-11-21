@@ -18,7 +18,7 @@ bagging_fit1 <- function(fweak, data){
   index_resample <- sample(1:length(data$y), length(data$y), replace = T)
   # Get the part of data resampled
   data$y <- data$y[index_resample]
-  data$x <- data$x[index_resample]
+  data$x <- data$x[index_resample, ]
   # Fit the weak model based on the resampled data
   fit_model(fweak, T, data)
 }
