@@ -2,6 +2,7 @@
 #'
 #' @param multi_est - list containing multiple estimates from weak models
 #' @param weights - nonegative vector that combines the multiple estimates
+#' @param reg - logical value, true if the weak model is doing regression, otherwise it's doing classification
 #'
 #' @return outputs Comb_parallel(multi_est, weights)
 #' @export
@@ -9,14 +10,24 @@
 #' @examples
 #' multi_est <- list(1, 2, 3)
 #' weights <- c(0.2, 0.4, 0.4)
-#' Comb_parallel(multi_est, weights)
-Comb_parallel <- function(multi_est, weights){
+#' reg <- T
+#' Comb_parallel(multi_est, weights, reg)
+Comb_parallel <- function(multi_est, weights, reg){
   # Normalize the weights
   weights <- weights/sum(weights)
-  # Calculate the weighted sums of the multiple estimates from weak models
-  comb_out <- multi_est[[1]] * weights[1]
-  for(i in 2:length(multi_est)){
-    comb_out <-  comb_out + multi_est[[i]] * weights[i]
+  if(reg){
+    # Calculate the weighted sums of the multiple estimates from weak models
+    comb_out <- multi_est[[1]] * weights[1]
+    for(i in 2:length(multi_est)){
+      comb_out <-  comb_out + multi_est[[i]] * weights[i]
+    }
+  }else{
+    class_num <- length(unique(multi_est))
+    proba <- rep(0, class_num)
+    for(i in 1:length(multi_est)){
+      proba[multi_est[[i]]] <- proba[multi_est[[i]]] * weights[i]
+    }
+    comb_out <- which.max(proba)
   }
   # Return the parallel combined result
   return(comb_out)
