@@ -41,11 +41,14 @@ bagging_fit1 <- function(fweak, data){
 #' data$y <- data$x %*% rnorm(5)
 #' bagging_fit1(fweak, data)
 bagging <- function(fweak, data, model_num, reg){
+  # Initialize multi_est for storing the fitting results of weak models
   multi_est <- list()
   length(multi_est) <- model_num
+  # Fit the weak models
   for(i in 1:model_num){
     multi_est[[i]] <- bagging_fit1(fweak, data)
   }
+  # Combine the results of weak models
   Comb_parallel(multi_est, rep(1, model_num), reg)
 }
 

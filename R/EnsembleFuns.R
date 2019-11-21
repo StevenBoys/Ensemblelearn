@@ -15,6 +15,7 @@
 Comb_parallel <- function(multi_est, weights, reg){
   # Normalize the weights
   weights <- weights/sum(weights)
+  # Check the task is regression or classification
   if(reg){
     # Calculate the weighted sums of the multiple estimates from weak models
     comb_out <- multi_est[[1]] * weights[1]
@@ -22,6 +23,7 @@ Comb_parallel <- function(multi_est, weights, reg){
       comb_out <-  comb_out + multi_est[[i]] * weights[i]
     }
   }else{
+    # Calculate the votes of each class from weak models
     class_num <- length(unique(multi_est))
     proba <- rep(0, class_num)
     for(i in 1:length(multi_est)){
