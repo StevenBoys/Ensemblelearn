@@ -53,7 +53,3 @@ fit_model <- function(fweak, parallel, data){
   # Return the new fitted value
   return(fweak_value)
 }
-
-
-
-
