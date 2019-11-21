@@ -1,11 +1,16 @@
 Package: Ensemblelearn
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
+Title: Use Ensemble learning to better prediction.
+Version: 0.0.0.9000
 Date: 2019-11-14
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
-Imports: Rcpp (>= 1.0.3)
+Author: 
+     person("Bowen", "Lei",
+            email = "bowen.lei@tamu.edu",
+            role = c("aut", "cre"))
+Maintainer: Bowen Lei <bowen.lei@stat.tamu.edu>
+Description: Ensemble Learning build multiple models or use multiple learning algorithms to do prediction. One weak model may be bad, but when we combine different weak models, it may make a big difference.
+    This package include lots of popular Ensemble Learning algorithms. And it also provides the framework for people to define their specific ensemble learning algorithm and help people to compute the results. People can define the weak models as well as the way of combining them.
+License: GPL-2
+Encoding: UTF-8
+Imports: Rcpp (>= 1.0.3), rpart
 LinkingTo: Rcpp, RcppArmadillo
