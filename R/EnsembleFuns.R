@@ -4,7 +4,7 @@
 #' @param weights - nonegative vector that combines the multiple estimates
 #' @param reg - logical value, true if the weak model is doing regression, otherwise it's doing classification
 #'
-#' @return outputs Comb_parallel(multi_est, weights)
+#' @return outputs Comb_parallel(multi_est, weights),
 #' @export
 #'
 #' @examples
@@ -42,7 +42,7 @@ Comb_parallel <- function(multi_est, weights, reg){
 #' @param parallel - logical value, true if its results will be combined in parallel
 #' @param data - list of data that fweak need
 #'
-#' @return outputs Comb_parallel(multi_est, weights)
+#' @return outputs fit_model(fweak, parallel, data)
 #' @export
 #'
 #' @examples
@@ -66,3 +66,46 @@ fit_model <- function(fweak, parallel, data){
   # Return the new fitted value
   return(fweak_value)
 }
+
+#' Function that does prediction based on the fitted models for the new coming data
+#'
+#' @param x - the new coming data that we want to do prediction on
+#' @param model_train - the list of models trained on the training data
+#' @param reg - logical value, true if the weak model is doing regression, otherwise it's doing classification
+#' @param parallel - logical value, true if its results will be combined in parallel
+#'
+#' @return outputs prediction(x, model_train, reg, parallel)
+#' @export
+#'
+#' @examples
+#' x = matrix(rnorm(1000), 200, 5)
+#' y <- x %*% rnorm(5)
+#' parallel <- TRUE
+#' reg <- TRUE
+#' model_train <- list(); model_train[[1]] <- lm(y ~ -1 + x)$coefficients
+#' x_new <- matrix(rnorm(5), 1, 5)
+#' prediction(x_new, model_train, reg, parallel)
+prediction <- function(x, model_train, reg, parallel){
+  # Initialize the list that stores the estimates for new data
+  multi_est <- list(); length(multi_est) <- length(model_train)
+  if(parallel){
+    # If the models are based on parallel setting
+    if(reg){
+      # If the task is regression
+      for(i in 1:length(model_train)){
+        multi_est[[i]] <- x %*% model_train[[i]]
+      }
+    }else{
+      # If the task is classification
+      for(i in 1:length(model_train)){
+        multi_est[[i]] <- model_train[[i]](x)
+      }
+    }
+  }else{
+    # If the models are based on series setting
+    multi_est <- model_train[[length(model_train)]](x)
+  }
+  multi_est
+}
+
+
