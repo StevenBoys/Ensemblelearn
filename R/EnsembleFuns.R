@@ -81,25 +81,16 @@ fit_model <- function(fweak, parallel, data){
 #' x = matrix(rnorm(1000), 200, 5)
 #' y <- x %*% rnorm(5)
 #' parallel <- TRUE
-#' reg <- TRUE
 #' model_train <- list(); model_train[[1]] <- lm(y ~ -1 + x)$coefficients
 #' x_new <- matrix(rnorm(5), 1, 5)
 #' prediction(x_new, model_train, reg, parallel)
-prediction <- function(x, model_train, reg, parallel){
+prediction <- function(x, model_train, parallel){
   # Initialize the list that stores the estimates for new data
   multi_est <- list(); length(multi_est) <- length(model_train)
   if(parallel){
     # If the models are based on parallel setting
-    if(reg){
-      # If the task is regression
-      for(i in 1:length(model_train)){
-        multi_est[[i]] <- x %*% model_train[[i]]
-      }
-    }else{
-      # If the task is classification
-      for(i in 1:length(model_train)){
-        multi_est[[i]] <- model_train[[i]](x)
-      }
+    for(i in 1:length(model_train)){
+      multi_est[[i]] <- model_train[[i]](x)
     }
   }else{
     # If the models are based on series setting
