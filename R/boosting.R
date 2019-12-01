@@ -95,3 +95,38 @@ graboo_fit1 <- function(data, loss = mse, eta = 0.1){
 }
 
 
+#' Function that implement the algorithm of Ensemble learning in Gradient Boosting
+#'
+#' @param data - list of data that fweak need including x, y and last_est
+#' @param model_num - the number of weak models you want to train and combine
+#' @param reg - logical value, true if the weak model is doing regression, otherwise it's doing classification
+#'
+#' @return Graboo(fweak, data, model_num, reg)
+#' @export
+#'
+#' @examples
+#' fweak <- function(x, y){
+#'   lm(y ~ -1 + x)$coefficients
+#' }
+#' data <- list(x = matrix(rnorm(1000), 200, 5))
+#' data$y <- data$x %*% rnorm(5)
+#' model_num <- 100; reg <- T; model <- "bagging"
+#' Graboo(fweak, data, model_num, reg, model)
+Graboo <- function(data, model_num, reg, loss = mse, eta = 0.1){
+  # Set the fweak function based on the input
+  fweak <- function(x, y, last_est){
+    graboo_reg(x, y, last_est, loss = mse, eta = eta)
+  }
+  # Initialize multi_est for storing the fitting results of weak models
+  model_train <- list()
+  length(model_train) <- model_num
+  # Fit the weak models
+  for(i in 1:model_num){
+    model_train[[i]] <- graboo_fit1(data)
+    data$last_est <- model_train[[i]](diag(rep(1, ncol(x))))
+  }
+  # Get the fitted values based on the trained models
+  comb_out <- prediction(data$x, model_train, parallel = F)
+  # Return the fitted values on training data and the list of weak models
+  list(fitted_values = comb_out, model_train = model_train)
+}
