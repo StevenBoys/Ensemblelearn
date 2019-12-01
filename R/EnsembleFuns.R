@@ -117,25 +117,27 @@ prediction <- function(x, model_train, parallel){
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
 #' data$y <- data$x %*% rnorm(5)
 #' model_num <- 100; reg <- T; model <- "bagging"
-#' Ensemblelear(fweak, data, model_num, reg, model)
+#' Ensemblelearn(fweak, data, model_num, reg, model)
 Ensemblelearn <- function(fweak, data, model_num, reg, model){
   if(model == "bagging"){
     fit1 <- bagging_fit1
   }else if(model == "randomforest"){
     fit1 <- randomforest_fit1
+    fweak <- dt_reg
   }
   # Initialize multi_est for storing the fitting results of weak models
   model_train <- list()
   length(model_train) <- model_num
   # Fit the weak models
   for(i in 1:model_num){
-    model_train[[i]] <- fit1(fweak, data)
+    model_train[[i]] <- fit1(fweak = fweak, data = data)
   }
   # Get the multiple estimation based on the trained models
+  if(model == "randomforest") data$x <- as.data.frame(data$x)
   multi_est <- prediction(data$x, model_train, parallel = T)
   # Combine the multiple estimation
   comb_out <- Comb_parallel(multi_est, rep(1, model_num), reg)
   # Return the fitted values on training data and the list of weak models
-  return(fitted_values = comb_out, model_train = model_train)
+  list(fitted_values = comb_out, model_train = model_train)
 }
 

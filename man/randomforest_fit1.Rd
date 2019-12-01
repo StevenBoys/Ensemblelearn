@@ -4,23 +4,22 @@
 \alias{randomforest_fit1}
 \title{Function that implement one weak model of Random Forest based on the resample of the features}
 \usage{
-randomforest_fit1(data, fweak)
+randomforest_fit1(data, fweak = dt_reg, fea_len = NULL)
 }
 \arguments{
 \item{data}{- list of data that fweak need}
 
-\item{fweak}{- function that generates estimate from weak model based on input, and the default model is Decision Tree}
+\item{fweak}{- function that generates estimate from weak model based on input, its default value is dt_reg}
+
+\item{fea_len}{- the number of features we sample each time, its default value is null}
 }
 \value{
-outputs bagging_fit1(fweak, data)
+outputs randomforest_fit1(fweak, data)
 }
 \description{
 Function that implement one weak model of Random Forest based on the resample of the features
 }
 \examples{
-fweak <- function(x, y){
-  lm(y ~ x)$coefficients
-}
 data <- list(x = matrix(rnorm(1000), 200, 5))
 data$y <- data$x \%*\% rnorm(5)
 bagging_fit1(fweak, data)
