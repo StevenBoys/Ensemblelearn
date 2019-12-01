@@ -3,7 +3,7 @@
 #' @param y - the true dependent variable
 #' @param y_hat - the estimate of the dependent variable
 #'
-#' @return outputs boosting_fit1(fweak, data)
+#' @return outputs mse(y, y_hat)
 #' @export
 #'
 #' @examples
@@ -21,14 +21,18 @@ mse <- function(y, y_hat){
 #' @param coef - the estimate of the coefficients in regression
 #' @param eps - the small increase used in the calculation of gradient
 #'
-#' @return outputs boosting_fit1(fweak, data)
+#' @return outputs nega_gra(loss, x, y, coef)
 #' @export
 #'
 #' @examples
-#' y <- rnorm(100); y_hat <- rep(0, 100)
-#' mse(y, y_hat)
+#' x <- matrix(rnorm(4000), 200, 20)
+#' beta <- rnorm(5)
+#' y <- x[, 1:length(beta)] %*% beta + rnorm(200)
+#' coef <- lm(y ~ -1 + x)$coefficients
+#' loss <- mse
+#' nega_gra(loss, x, y, coef)
 nega_gra <- function(loss, x, y, coef, eps = 0.001){
-  sapply(coef, function(t){
+  - sapply(coef, function(t){
     coef_new[t] <- coef[t] + eps
     (loss(y, x %*% coef_new)-loss(y, x %*% coef))/eps
   })
@@ -52,8 +56,11 @@ nega_gra <- function(loss, x, y, coef, eps = 0.001){
 #' last_est <- rep(0, length(y))
 #' graboo_reg(x, y, last_est)
 graboo_reg <- function(x, y, last_est, loss = mse, eta = 0.1){
-  nega_gra <- - (loss(y, last_est + ))
-  return(rpart_mod)
+  # Calculate the negative gradient
+  nega_gra_value <- nega_gra(mse, x, y, last_est)
+  # Update the value of coefficients based on the estimate in the last weak model
+  new_est <- last_est + nega_gra_value * eta
+  return(new_est)
 }
 
 #' Function that implement one resample of Boosting in regression
