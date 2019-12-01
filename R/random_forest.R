@@ -1,15 +1,20 @@
 #' Function that builds weak model on Decision Tree for regression task
-
-rf_reg <- function(x, y){
-  rpart.mod=rpart(y ~ x, method="anova")
+#'
+#' @param x - input independent variables x for the training
+#' @param y - input dependent variable y for the training
+#'
+#' @return dt_reg(x ,y)
+#' @export
+#'
+#' @examples
+#' x <- matrix(rnorm(4000), 200, 20)
+#' beta <- rnorm(5)
+#' y <- x[, 1:length(beta)] %*% beta + rnorm(200)
+#' dt_reg(x, y)
+dt_reg <- function(x, y){ß
+  rpart_mod <- rpart(y ~ x, method="anova")
+  return(rpart.mod)
 }
-
-#' Function that builds weak model on Decision Tree for classification task
-
-rf_cla <- function(x, y){
-
-}
-
 
 #' Function that implement one weak model of Random Forest based on the resample of the features
 #'

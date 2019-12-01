@@ -2,7 +2,7 @@
 % Please edit documentation in R/bagging.R
 \name{bagging_fit1}
 \alias{bagging_fit1}
-\title{Function that implement one resample of Bagging}
+\title{Function that implement one resample of Bagging in regression}
 \usage{
 bagging_fit1(fweak, data)
 }
@@ -15,7 +15,7 @@ bagging_fit1(fweak, data)
 outputs bagging_fit1(fweak, data)
 }
 \description{
-Function that implement one resample of Bagging
+Function that implement one resample of Bagging in regression
 }
 \examples{
 fweak <- function(x, y){
