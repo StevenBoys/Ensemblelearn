@@ -18,60 +18,33 @@ dt_reg <- function(x, y){ß
 
 #' Function that implement one weak model of Random Forest based on the resample of the features
 #'
-#' @param fweak - function that generates estimate from weak model based on input, and the default model is Decision Tree
+#' @param fweak - function that generates estimate from weak model based on input, its default value is dt_reg
 #' @param data - list of data that fweak need
+#' @param fea_len - the number of features we sample each time, its default value is null
 #'
-#' @return outputs bagging_fit1(fweak, data)
+#' @return outputs randomforest_fit1(fweak, data)
 #' @export
 #'
 #' @examples
-#' fweak <- function(x, y){
-#'   lm(y ~ x)$coefficients
-#' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
 #' data$y <- data$x %*% rnorm(5)
 #' bagging_fit1(fweak, data)
-randomforest_fit1 <- function(data, fweak){
-  # Get the resample index
-  index_resample <- sample(1:length(data$y), length(data$y), replace = T)
-  # Get the part of data resampled
-  data$y <- data$y[index_resample]
-  data$x <- data$x[index_resample, ]
-  # Fit the weak model based on the resampled data
-  fit_model(fweak, T, data)
-}
-
-#' Function that implement the algorithm of Bagging
-#'
-#' @param fweak - function that generates estimate from weak model based on input
-#' @param data - list of data that fweak need
-#' @param model_num - the number of weak models you want to train and combine
-#' @param reg - logical value, true if the weak model is doing regression, otherwise it's doing classification
-#'
-#' @return outputs bagging_fit1(fweak, data)
-#' @export
-#'
-#' @examples
-#' fweak <- function(x, y){
-#'   lm(y ~ x)$coefficients
-#' }
-#' data <- list(x = matrix(rnorm(1000), 200, 5))
-#' data$y <- data$x %*% rnorm(5)
-#' bagging_fit1(fweak, data)
-bagging <- function(fweak, data, model_num, reg){
-  # Initialize multi_est for storing the fitting results of weak models
-  multi_est <- list()
-  length(multi_est) <- model_num
-  # Fit the weak models
-  for(i in 1:model_num){
-    multi_est[[i]] <- bagging_fit1(fweak, data)
+randomforest_fit1 <- function(data, fweak = dt_reg, fea_len = NULL){
+  # Set the number of features we sample each time if it's initial value is null
+  if(is.null(fea_len)){
+    fea_len <- floor(ncol(data$x))
   }
-  # Combine the results of weak models
-  Comb_parallel(multi_est, rep(1, model_num), reg)
+  # Get the resample index
+  index_resample <- sample(1:ncol(data$x), ncol(data$x), replace = F)
+  # Get the part of data resampled
+  data$x <- data$x[, index_resample]
+  # Fit the weak model based on the resampled data
+  rpart_mod <- fit_model(fweak, T, data)
+  # Construct the trained model based on the rpart_mod
+  model_train <- function(x){
+    predict(rpart_mod, x)
+  }
+  # Returen the trained function
+  model_train
 }
-
-
-
-
-
 
