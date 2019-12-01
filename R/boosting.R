@@ -63,10 +63,11 @@ graboo_reg <- function(x, y, last_est, loss = mse, eta = 0.1){
   return(new_est)
 }
 
-#' Function that implement one resample of Boosting in regression
+#' Function that implement one weak model step of Gradient Boosting in regression
 #'
-#' @param fweak - function that generates estimate from weak model based on input
 #' @param data - list of data that fweak need
+#' @param loss - the loss function used, its default value is the mean of the square error
+#' @param eta - the step size we use to update the total estimate each time, its default value is 0.1
 #'
 #' @return outputs boosting_fit1(fweak, data)
 #' @export
@@ -77,15 +78,14 @@ graboo_reg <- function(x, y, last_est, loss = mse, eta = 0.1){
 #' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
 #' data$y <- data$x %*% rnorm(5)
-#' boosting_fit1(fweak, data)
-boosting_fit1 <- function(fweak, data){
-  # Get the resample index
-  index_resample <- sample(1:length(data$y), length(data$y), replace = T)
-  # Get the part of data resampled
-  data$y <- data$y[index_resample]
-  data$x <- data$x[index_resample, ]
-  # Fit the weak model based on the resampled data
-  coef <- fit_model(fweak, T, data)
+#' graboo_fit1(fweak, data)
+graboo_fit1 <- function(data, loss = mse, eta = 0.1){
+  # Set the fweak function based on the input
+  fweak <- function(x, y, last_est){
+    graboo_reg(x, y, last_est, loss = mse, eta = eta)
+  }
+  # Fit the weak model
+  coef <- fit_model(fweak, F, data)
   # Construct the trained model based on the coef
   model_train <- function(x){
     x %*% coef
@@ -93,4 +93,5 @@ boosting_fit1 <- function(fweak, data){
   # Returen the trained function
   model_train
 }
+
 
