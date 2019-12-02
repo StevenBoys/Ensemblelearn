@@ -32,17 +32,17 @@ dt_reg <- function(x, y){
 randomforest_fit1 <- function(data, fweak = dt_reg, fea_len = NULL){
   # Set the number of features we sample each time if it's initial value is null
   if(is.null(fea_len)){
-    fea_len <- floor(ncol(data$x))
+    fea_len <- floor(ncol(data$x)/2)
   }
   # Get the resample index
-  index_resample <- sample(1:ncol(data$x), ncol(data$x), replace = F)
+  index_resample <- sample(1:ncol(data$x), fea_len, replace = F)
   # Get the part of data resampled
   data$x <- data$x[, index_resample]
   # Fit the weak model based on the resampled data
   rpart_mod <- fit_model(fweak, T, data)
   # Construct the trained model based on the rpart_mod
   model_train <- function(x){
-    predict(rpart_mod, x)
+    predict(rpart_mod, x[, index_resample])
   }
   # Returen the trained function
   model_train
@@ -60,20 +60,17 @@ randomforest_fit1 <- function(data, fweak = dt_reg, fea_len = NULL){
 #' @export
 #'
 #' @examples
-#' fweak <- function(x, y){
-#'   lm(y ~ -1 + x)$coefficients
-#' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
 #' data$y <- data$x %*% rnorm(5)
-#' model_num <- 100; reg <- T; model <- "bagging"
-#' Randomforest(fweak, data, model_num)
-Randomforest <- function(fweak, data, model_num, reg){
+#' model_num <- 100; reg <- T
+#' Randomforest(data, model_num, reg)
+Randomforest <- function(data, model_num, reg, fweak = dt_reg){
   # Initialize multi_est for storing the fitting results of weak models
   model_train <- list()
   length(model_train) <- model_num
   # Fit the weak models
   for(i in 1:model_num){
-    model_train[[i]] <- randomforest_fit1(fweak = fweak, data = data)
+    model_train[[i]] <- randomforest_fit1(data = data, fweak = fweak)
   }
   # Get the multiple estimation based on the trained models
   data$x <- as.data.frame(data$x)

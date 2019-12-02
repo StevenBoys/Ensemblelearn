@@ -32,9 +32,10 @@ mse <- function(y, y_hat){
 #' loss <- mse
 #' nega_gra(loss, x, y, coef)
 nega_gra <- function(loss, x, y, coef, eps = 0.001){
-  - sapply(coef, function(t){
-    coef_new[t] <- coef[t] + eps
-    (loss(y, x %*% coef_new)-loss(y, x %*% coef))/eps
+  - sapply(1:length(y), function(t){
+    y_hat <- x %*% coef; y_hat_new <- y_hat
+    y_hat_new[t] <- y_hat_new[t] + eps
+    (loss(y, y_hat_new)-loss(y, y_hat))/eps
   })
 }
 
@@ -53,13 +54,15 @@ nega_gra <- function(loss, x, y, coef, eps = 0.001){
 #' x <- matrix(rnorm(4000), 200, 20)
 #' beta <- rnorm(5)
 #' y <- x[, 1:length(beta)] %*% beta + rnorm(200)
-#' last_est <- rep(0, length(y))
+#' last_est <- rep(0, ncol(x))
 #' graboo_reg(x, y, last_est)
 graboo_reg <- function(x, y, last_est, loss = mse, eta = 0.1){
   # Calculate the negative gradient
-  nega_gra_value <- nega_gra(mse, x, y, last_est)
+  nega_gra_value <- nega_gra(loss, x, y, last_est)
+  # Build regression using the negative gradient as the respondse
+  coef_est <- lm(nega_gra_value ~ -1 + x)$coefficients
   # Update the value of coefficients based on the estimate in the last weak model
-  new_est <- last_est + nega_gra_value * eta
+  new_est <- last_est + coef_est * eta
   return(new_est)
 }
 
@@ -82,7 +85,7 @@ graboo_reg <- function(x, y, last_est, loss = mse, eta = 0.1){
 graboo_fit1 <- function(data, loss = mse, eta = 0.1){
   # Set the fweak function based on the input
   fweak <- function(x, y, last_est){
-    graboo_reg(x, y, last_est, loss = mse, eta = eta)
+    graboo_reg(x, y, last_est, loss = loss, eta = eta)
   }
   # Fit the weak model
   coef <- fit_model(fweak, F, data)
@@ -105,14 +108,12 @@ graboo_fit1 <- function(data, loss = mse, eta = 0.1){
 #' @export
 #'
 #' @examples
-#' fweak <- function(x, y){
-#'   lm(y ~ -1 + x)$coefficients
-#' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
 #' data$y <- data$x %*% rnorm(5)
-#' model_num <- 100; reg <- T; model <- "bagging"
-#' Graboo(fweak, data, model_num, reg, model)
-Graboo <- function(data, model_num, reg, loss = mse, eta = 0.1){
+#' data$last_est <- rep(0, 5)
+#' model_num <- 100; reg <- T
+#' Graboo(data, model_num, reg)
+Graboo <- function(data, model_num, reg, loss = mse, eta = 0.1, fweak = graboo_reg){
   # Set the fweak function based on the input
   fweak <- function(x, y, last_est){
     graboo_reg(x, y, last_est, loss = mse, eta = eta)
@@ -123,7 +124,7 @@ Graboo <- function(data, model_num, reg, loss = mse, eta = 0.1){
   # Fit the weak models
   for(i in 1:model_num){
     model_train[[i]] <- graboo_fit1(data)
-    data$last_est <- model_train[[i]](diag(rep(1, ncol(x))))
+    data$last_est <- model_train[[i]](diag(rep(1, ncol(data$x))))
   }
   # Get the fitted values based on the trained models
   comb_out <- prediction(data$x, model_train, parallel = F)

@@ -56,7 +56,7 @@ Comb_parallel <- function(multi_est, weights, reg){
 fit_model <- function(fweak, parallel, data){
   # When fweak's results will be combined in parallel
   if(parallel){
-    x <- data$x; y <- data$y
+    x <- as.matrix(data$x); y <- data$y
     fweak_value <- fweak(x, y)
   }else{
     # When fweak's results will be combined in series
