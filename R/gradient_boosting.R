@@ -103,6 +103,9 @@ graboo_fit1 <- function(data, loss = mse, eta = 0.1){
 #' @param data - list of data that fweak need including x, y and last_est
 #' @param model_num - the number of weak models you want to train and combine
 #' @param reg - logical value, true if the weak model is doing regression, otherwise it's doing classification
+#' @param loss - the loss function used, its default value is the mean of the square error
+#' @param eta - the step size we use to update the total estimate each time, its default value is 0.1
+#' @param fweak - function that generates estimate from weak model based on input, its default value is graboo_reg
 #'
 #' @return Graboo(fweak, data, model_num, reg)
 #' @export
@@ -131,3 +134,8 @@ Graboo <- function(data, model_num, reg, loss = mse, eta = 0.1, fweak = graboo_r
   # Return the fitted values on training data and the list of weak models
   list(fitted_values = comb_out, model_train = model_train)
 }
+
+
+
+
+
