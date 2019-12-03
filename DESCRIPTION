@@ -12,6 +12,5 @@ Description: Ensemble Learning build multiple models or use multiple learning al
     This package include lots of popular Ensemble Learning algorithms. And it also provides the framework for people to define their specific ensemble learning algorithm and help people to compute the results. People can define the weak models as well as the way of combining them.
 License: GPL-2
 Encoding: UTF-8
-Imports: Rcpp (>= 1.0.3), rpart
-LinkingTo: Rcpp, RcppArmadillo
+Imports: rpart
 RoxygenNote: 6.1.1
