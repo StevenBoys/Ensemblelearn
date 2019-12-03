@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' fweak <- function(x, y, last_est){
-#'   lm(y ~ x, weights = last_est)$coefficients
+#'   lm(y ~ -1 + x, weights = last_est)$coefficients
 #' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
 #' data$y <- data$x %*% rnorm(5)
@@ -18,7 +18,7 @@ adaboost_fit1 <- function(fweak, data){
   # Fit the weak model
   coef <- fit_model(fweak, F, data)
   # Calculate the corresponding errors
-  errors <- (data$y - x %*% coef) * (data$y - x %*% coef)
+  errors <- (data$y - data$x %*% coef) * (data$y - data$x %*% coef)
   # Calculate the weights for next step based on the errors
   weights <- errors / (1 - errors)
   weights <- weights / sum(weights)
@@ -43,13 +43,13 @@ adaboost_fit1 <- function(fweak, data){
 #'
 #' @examples
 #' fweak <- function(x, y, last_est){
-#'   lm(y ~ x, weights = last_est)$coefficients
+#'   lm(y ~ -1 + x, weights = last_est)$coefficients
 #' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
 #' data$y <- data$x %*% rnorm(5)
 #' data$last_est <- rep(1/length(data$y), length(data$y))
 #' model_num <- 100; reg <- T
-#' Adaboost(data, model_num, reg)
+#' Adaboost(fweak, data, model_num, reg)
 Adaboost <- function(fweak, data, model_num, reg){
   # Initialize multi_est for storing the fitting results of weak models
   model_train <- list()
@@ -58,7 +58,7 @@ Adaboost <- function(fweak, data, model_num, reg){
   errors <- rep(0, model_num)
   # Fit the weak models
   for(i in 1:model_num){
-    fit1 <- adaboost_fit1(data)
+    fit1 <- adaboost_fit1(fweak, data)
     model_train[[i]] <- fit1$model_train
     data$last_est <- fit1$weights
     errors[i] <- fit1$error
