@@ -20,7 +20,7 @@ adaboost_fit1 <- function(fweak, data){
   # Calculate the corresponding errors
   errors <- (data$y - data$x %*% coef) * (data$y - data$x %*% coef)
   # Calculate the weights for next step based on the errors
-  weights <- errors / (1 - errors)
+  weights <- errors / (max(errors) + 1 - errors)
   weights <- weights / sum(weights)
   # Construct the trained model based on the coef
   model_train <- function(x){
@@ -36,9 +36,8 @@ adaboost_fit1 <- function(fweak, data){
 #' @param fweak - function that generates estimate from weak model based on input
 #' @param data - list of data that fweak need including x, y and last_est
 #' @param model_num - the number of weak models you want to train and combine
-#' @param reg - logical value, true if the weak model is doing regression, otherwise it's doing classification
 #'
-#' @return Adaboost(fweak, data, model_num, reg)
+#' @return Adaboost(fweak, data, model_num)
 #' @export
 #'
 #' @examples
@@ -48,9 +47,9 @@ adaboost_fit1 <- function(fweak, data){
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
 #' data$y <- data$x %*% rnorm(5)
 #' data$last_est <- rep(1/length(data$y), length(data$y))
-#' model_num <- 100; reg <- T
-#' Adaboost(fweak, data, model_num, reg)
-Adaboost <- function(fweak, data, model_num, reg){
+#' model_num <- 100
+#' Adaboost(fweak, data, model_num)
+Adaboost <- function(fweak, data, model_num){
   # Initialize multi_est for storing the fitting results of weak models
   model_train <- list()
   length(model_train) <- model_num
@@ -66,7 +65,7 @@ Adaboost <- function(fweak, data, model_num, reg){
   # Get the fitted values based on the trained models
   comb_out <- prediction(data$x, model_train, parallel = T)
   # Calculate the weights of combining the weak models based on the errors
-  weights <- log((1-errors) / errors)
+  weights <- log((max(errors) + 1 - errors) / errors)
   weights <- weights / sum(weights)
   # Return the fitted values on training data, the list of weak models and the weights for combining the weak models
   list(fitted_values = comb_out, model_train = model_train, weights = weights)

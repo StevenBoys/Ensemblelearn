@@ -35,9 +35,8 @@ bagging_fit1 <- function(fweak, data){
 #' @param fweak - function that generates estimate from weak model based on input
 #' @param data - list of data that fweak need
 #' @param model_num - the number of weak models you want to train and combine
-#' @param reg - logical value, true if the weak model is doing regression, otherwise it's doing classification
 #'
-#' @return bagging(fweak, data, model_num, reg)
+#' @return bagging(fweak, data, model_num)
 #' @export
 #'
 #' @examples
@@ -46,9 +45,9 @@ bagging_fit1 <- function(fweak, data){
 #' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
 #' data$y <- data$x %*% rnorm(5)
-#' model_num <- 100; reg <- T
-#' Bagging(fweak, data, model_num, reg)
-Bagging <- function(fweak, data, model_num, reg){
+#' model_num <- 100
+#' Bagging(fweak, data, model_num)
+Bagging <- function(fweak, data, model_num){
   # Initialize multi_est for storing the fitting results of weak models
   model_train <- list()
   length(model_train) <- model_num
@@ -59,7 +58,7 @@ Bagging <- function(fweak, data, model_num, reg){
   # Get the multiple estimation based on the trained models
   multi_est <- prediction(data$x, model_train, parallel = T)
   # Combine the multiple estimation
-  comb_out <- Comb_parallel(multi_est, rep(1, model_num), reg)
+  comb_out <- Comb_parallel(multi_est, rep(1, model_num))
   # Return the fitted values on training data and the list of weak models
   list(fitted_values = comb_out, model_train = model_train)
 }

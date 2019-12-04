@@ -12,7 +12,7 @@
 #' y <- x[, 1:length(beta)] %*% beta + rnorm(200)
 #' dt_reg(x, y)
 dt_reg <- function(x, y){
-  rpart_mod <- rpart(y ~ x, method="anova")
+  rpart_mod <- rpart::rpart(y ~ x, method="anova")
   return(rpart_mod)
 }
 
@@ -54,17 +54,16 @@ randomforest_fit1 <- function(data, fweak = dt_reg, fea_len = NULL){
 #' @param fweak - function that generates estimate from weak model based on input
 #' @param data - list of data that fweak need
 #' @param model_num - the number of weak models you want to train and combine
-#' @param reg - logical value, true if the weak model is doing regression, otherwise it's doing classification
 #'
-#' @return bagging(fweak, data, model_num, reg)
+#' @return bagging(fweak, data, model_num)
 #' @export
 #'
 #' @examples
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
 #' data$y <- data$x %*% rnorm(5)
-#' model_num <- 100; reg <- T
-#' Randomforest(data, model_num, reg)
-Randomforest <- function(data, model_num, reg, fweak = dt_reg){
+#' model_num <- 100
+#' Randomforest(data, model_num)
+Randomforest <- function(data, model_num, fweak = dt_reg){
   # Initialize multi_est for storing the fitting results of weak models
   model_train <- list()
   length(model_train) <- model_num
@@ -76,7 +75,7 @@ Randomforest <- function(data, model_num, reg, fweak = dt_reg){
   data$x <- as.data.frame(data$x)
   multi_est <- prediction(data$x, model_train, parallel = T)
   # Combine the multiple estimation
-  comb_out <- Comb_parallel(multi_est, rep(1, model_num), reg)
+  comb_out <- Comb_parallel(multi_est, rep(1, model_num))
   # Return the fitted values on training data and the list of weak models
   list(fitted_values = comb_out, model_train = model_train)
 }
