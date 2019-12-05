@@ -20,7 +20,7 @@ adaboost_fit1 <- function(fweak, data){
   # Calculate the corresponding errors
   errors <- (data$y - data$x %*% coef) * (data$y - data$x %*% coef)
   # Calculate the weights for next step based on the errors
-  weights <- errors / (max(errors) + 1 - errors)
+  weights <- log(1 + errors)
   weights <- weights / sum(weights)
   # Construct the trained model based on the coef
   model_train <- function(x){
@@ -63,7 +63,6 @@ Adaboost <- function(fweak, data, model_num){
     errors[i] <- fit1$error
   }
   # Calculate the weights of combining the weak models based on the errors
-  weights <- log((max(errors) + 1 - errors) / errors)
   weights <- weights / sum(weights)
   # Get the multiple estimation based on the trained models
   multi_est <- prediction(data$x, model_train, parallel = T)

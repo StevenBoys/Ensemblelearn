@@ -12,7 +12,7 @@
 #' y <- x[, 1:length(beta)] %*% beta + rnorm(200)
 #' dt_reg(x, y)
 dt_reg <- function(x, y){
-  rpart_mod <- rpart::rpart(y ~ x, method="anova")
+  rpart_mod <- rpart(y ~ x, method="anova")
   return(rpart_mod)
 }
 
