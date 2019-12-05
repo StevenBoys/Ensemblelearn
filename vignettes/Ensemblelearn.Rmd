@@ -1,8 +1,13 @@
 ---
-title: "Ensemblelearn"
-output: rmarkdown::html_vignette
+title: "Ensemble Learning in Regression"
+author: "Bowen Lei"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
 vignette: >
-  %\VignetteIndexEntry{Ensemblelearn}
+  %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,6 +19,287 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Overview
+
+In this vignette, we explain the reason for using Ensemble Learning and show how to use the functions in R package [**Ensemblelearn**](https://github.com/StevenBoys/Ensemblelearn).
+
+## Weak Model
+
+In statistics and machine learning, when we want to fit a regression model and do prediction, sometimes it’s impossible to get a good model and do good prediction or it’s very expensive to get them. And the weak model which is easy to get does not have good performance and cannot satisfy our goals.
+
+For example, in real life problems, it is common that the data may have been contaminated. At this situation, it is difficult to build a good model based on the contaminated data or we need very big size of data to do it. We can do a simulation to show this.
+
+Suppose we have 50 samples, 5 independent variables and 1 responce. And the first, third and fifth variable are contaminated. There is a linear model and we want to estimate the coefficients.
+
+```{r, include = FALSE}
+library(ggplot2)
+```
+
+```{r}
+# Generate the simulation data x
+set.seed(1)
+n <- 50; p <- 5; sd_value <- 2
+x <- matrix(rnorm(n*p), n, p)
+# Generate the coefficients beta
+beta <- rnorm(p)
+# Generate the errors
+eps <- rnorm(n, 0, sd_value)
+# Generate the responce
+y <- x %*% beta +eps
+# Make the first, third and fifth variable contaminated
+x[, 1] <- rnorm(n, 0, 0.5)
+x[, 3] <- rnorm(n, 0, 0.5)
+x[, 5] <- rnorm(n, 0, 0.5)
+simu_data <- data.frame(y = y, x = x)
+```
+
+We can have a look at the simulation data.
+
+```{r, echo=FALSE, results='asis'}
+# Show the data
+knitr::kable(head(simu_data, 5))
+```
+
+Now we can show that if we use the linear regression model, the performence is bad and it is a weak model we talked above.
+
+```{r}
+model1 <- lm(y ~ -1 + x)
+simu_data$fitted <- predict(model1, as.data.frame(x))
+ggplot(simu_data, aes(x = y, y = fitted)) + geom_point(size = 3)
+```
+
+## Ensemble Learning
+
+At these situations we mentioned above, Ensemble Learning can help us a lot. Ensemble Learning build multiple weak models and combine them to do prediction. One weak model may be bad, but when we combine different weak models, it may make a big difference.
+
+Some popular algorithms are belonged to Ensemble Learning, including Bagging, Random Forest, Gradient Boosting and Adaboost.
+
+## Ensemblelearn
+
+[**Ensemblelearn**](https://github.com/StevenBoys/Ensemblelearn) is a R package that includes several popular Ensemble Learning algorithms in order to help people do prediction in regression, including Bagging, Random Forest, Gradient Boosting and Adaboost. And it also provide the framework for people to construct their own Ensemble Learning algotithms, where people can define their own weak models and the way of combining them.
+
+There are two ways of combining the weak models. One is parallel and one is series. The output of parallel is always a weighted sum of the outputs of the weak models. As for the series, the output of the last weak model will be the input of the next weak model.
+
 ```{r setup}
 library(Ensemblelearn)
 ```
+
+### Bagging
+
+Bagging is also called Bootstrap aggregating. It builds certain number of independent weak models and uses the average output as the trained model and prediction. Because of the independence between the weak models, they are combined in a parallel way.
+
+And in each weak model, it uses boostrap to resample a new dataset from the original dataset. And it uses the corresponding weak model to train the new dataset.
+
+So when we want use Bagging, firstly we need to specify the weak model we want to use. And the parameters for the weak model of Bagging should be x and y, which are the independent variables and the responce. And the output will be the estimates of the coefficients of the regression model. For example, we can use the simple linear regression model.
+
+```{r}
+# Build a weak model for Bagging
+fweak <- function(x, y){
+  lm(y ~ -1 + x)$coefficients
+}
+```
+
+Secondly, we should put the independent variables and responce into a list.
+
+```{r}
+# Simulate the data and put them into a list
+set.seed(2); n <- 200; p <- 5
+data <- list(x = matrix(rnorm(n * p), n, p))
+eps <- rnorm(n, 0, 3)
+beta <- rnorm(p)
+data$y <- data$x %*% beta + eps
+```
+
+Then, we can set the number of weak models we want to train and use function `Bagging` to train the data.
+
+```{r}
+# Set the number of weak models
+model_num <- 50
+# Use Bagging algorithm to train the data
+model_bagging <- Bagging(fweak, data, model_num)
+```
+
+The output is a list consisting of two parts. The `fitted_values` is a vector of fitted value for the responce in the training dataset and the `model_train` is a list the trained weak models which can be used to do prediction on new coming dataset.
+
+We can have a look at the results of Bagging algorithm.
+
+```{r}
+# Build the true responce and the fitted value into a data frame
+results <- data.frame(y = data$y);
+results$fitted_value <- model_bagging$fitted_values
+# Draw the plot to show the relationship
+ggplot(results, aes(x = y, y = fitted_value)) +
+geom_point(size = 3, alpha = 0.7)
+```
+
+If we have new coming dataset, we can use `prediction` function and `Comb_parallel` function to do prediction about the responce. Function `prediction` can give multiple predictions based on the multiple trained models. And it needs three inputs including the new coming dataset `x`, a list of trained weak models `model_train` and an indicator `parallel` which indicates whether the combing way is parallel or not. As for function `Comb_parallel`, it can combine the multiple predictions and give the final prediction. It needs three inputs including multiple predictions `multi_est`, the combining `weights`.
+
+And now let's compare the prediction performence of bagging and a simple linear regression model. Let's first build a linear regression model.
+
+```{r}
+model_lm <- lm(y ~ -1 + x, data = data)
+```
+
+For the comparison, we can simulate several new coming dataset, and analyze the overall performences.
+
+```{r}
+# Set the sample size in each new coming dataset
+n1 <- 10
+# Set the number of new coming dataset
+max_num <- 100
+# Set the indicator about the parallel way of combing
+parallel <- TRUE
+# Initialize the vectors to store the mse of the predictions on each dataset
+error_lm <- rep(0, max_num); error_bagging <- rep(0, max_num)
+# Set the weights
+weights <- rep(1, length(model_bagging$model_train))
+# Do the comparison between bagging and linear regression model
+for(i in 1:max_num) {
+  set.seed(i+100)
+  # Simulate the new coming dataset
+  x_new <- matrix(rnorm(n1*p), n1, p)
+  eps_new <- rnorm(n1)
+  y_new <- x_new %*% beta + eps_new
+  # Do prediction based on the linear regression model
+  pre_lm <- x_new %*% model_lm$coefficients
+  # Do prediction based on the bagging model
+  multipre_bagging <- prediction(x_new, model_bagging$model_train, parallel)
+  pre_bagging <- Comb_parallel(multipre_bagging, weights)
+  # Calculate the corresponding errors
+  error_lm[i] <- mean((pre_lm - y_new)^2)
+  error_bagging[i] <- mean((pre_bagging - y_new)^2)
+}
+```
+
+We can use the box plot to see the difference between the performences in the two models.
+
+```{r}
+# Build the data frame storing the errors and model type
+model_type <- c(rep("lm", max_num), rep("bagging", max_num))
+errors <- data.frame(error = c(error_lm, error_bagging), model = model_type)
+# draw the box plot
+ggplot(errors, aes(x = model, y = error, fill = model)) + geom_boxplot() + 
+scale_fill_manual(values = c("#2b8cbe", "#e34a33"))
+```
+
+We can see that not only the mean of the mse in Bagging is smaller than the linear regression model, but also the variance is reduced in Bagging.
+
+### Random Forest
+
+Random Forest is also an very popular Ensemble Learning algorithm. Unlike Bagging, it samples a subset of the independent variables instead of data samples. Then it builds weak models on each of these subset of features. And it always uses Decision Trees as the weak model so in this package we set it as the default weak model.
+
+We can use function `Randomforest` to build a Random Forest model. It need three inputs including a list of `data`, `model_num` and weak model `fweak`. This is the same with bagging. But we give a default value for `fweak`, which is the function `dt_reg` based on the package `rpart`.
+
+We can still use the data simulated above. And use the `Randomforest` to build the model.
+
+```{r}
+# Build the Random Forest model
+model_rf <- Randomforest(data, model_num)
+```
+
+We can have a look at the results of Random Forest algorithm.
+
+```{r}
+# Build the true responce and the fitted value into a data frame
+results <- data.frame(y = data$y);
+results$fitted_value <- model_rf$fitted_values
+# Draw the plot to show the relationship
+ggplot(results, aes(x = y, y = fitted_value)) +
+geom_point(size = 3, alpha = 0.7)
+```
+
+We can compare the results of linear regression model and Random Forest, which is the red and blue circles respectively. We can see that the random forest is better than the linear regression model.
+
+
+```{r}
+# Build the true responce and the fitted value into a data frame
+results <- data.frame(y = c(data$y, data$y));
+results$fitted_value <- c(model_rf$fitted_values, model_lm$fitted.values)
+results$model_type <- c(rep("random forest", n), rep("lm", n))
+# Draw the plot to show the relationship
+ggplot(results, aes(x = y, y = fitted_value, color = model_type)) +
+geom_point(size = 3, alpha = 0.7)
+```
+
+### Adaboost
+
+Adaboost is different from the two we talked above. The multiple weak models of it is not independent. To be more specific, firstly, we will use train the first weak model on the dataset, and the weights of each individual samples are the same. And based on this weak model's errors, we can calculate a weight for the next weak model. And we give larger weights to the samples whose errors are larger. Then in the next weak model, we can take more attention to the samples which are difficult to estimate so that we can get a better results.
+
+We can use the function `Adaboost` to build the Adaboost model. It needs three inputs including the weak model `fweak`, `data` and `model_num`, which is the same with the previous model. But the structure of `data` is a little bit different. It is list of three parts consisting of independent variables `x`, response `y` and the weights of the samples `last_est` which is the output of the previous weak model.
+
+We keep use the dataset simulated above. As the weak model, we use the weighted linear regression model here.
+
+```{r}
+# Build a weak model for Adaboost
+fweak <- function(x, y, last_est){
+  lm(y ~ -1 + x, weights = last_est)$coefficients
+}
+# Initialize the weights
+data$last_est <- rep(1/length(data$y), length(data$y))
+# Build the Adaboost model
+model_adaboost <- Adaboost(fweak, data, model_num)
+```
+
+And there are three outputs here. One is the `fitted_values` for the training dataset; one is a list of trained weak models `model_train`; and one is `weights` used for combining each weak models when doing prediction.
+
+We can see the results of Adaboost model.
+
+```{r}
+# Build the true responce and the fitted value into a data frame
+results <- data.frame(y = data$y);
+results$fitted_value <- model_adaboost$fitted_values
+# Draw the plot to show the relationship
+ggplot(results, aes(x = y, y = fitted_value)) +
+geom_point(size = 3, alpha = 0.7)
+```
+
+### Gradient Boosting
+
+Gradient Boosting is another popular Boosting model. In the model, firstly, we train a weak model based on the training dataset. And we add the multiply a small step size with the estimate and add it into the final estimate whose initial values are all zero. Then we calculate the negative gradient of the loss function, which we should specify in the input parameter and its default value is function `mse` that can calculate mean square errors. 
+
+Secondly, we use the negative gradient as a new responce in the next weak model and get a new estimate. And we multiply the small step size with the estimate and add it into the final estimate. And we should follow this iritation untill reaching the maximun number of weak models.
+
+Based on the descripsion above, we can see that the weak models in Gradient Boosting are dependent and the final results are combined in a series way.
+
+We can use the function `Graboo` to build the Gradient Boosting model. It needs five input parameters including the `data`, `model_num`, loss function `loss` whose default value is `mse`, the small step size `eta` whose default value is 0.1 and the weak model `fweak` whose default value is `graboo_reg`. 
+
+We keep use the dataset simulated above. As the weak model, we use the default value.
+
+```{r}
+# Initialize the last_est in the list of data
+data$last_est <- rep(0, ncol(data$x))
+# Build the Gradient Boosting model
+model_graboo <- Graboo(data, model_num)
+```
+
+We can see the output
+
+```{r}
+# Build the true responce and the fitted value into a data frame
+results <- data.frame(y = data$y);
+results$fitted_value <- model_graboo$fitted_values
+# Draw the plot to show the relationship
+ggplot(results, aes(x = y, y = fitted_value)) +
+geom_point(size = 3, alpha = 0.7)
+```
+
+And if there is a new coming data, we can do prediction about the unknown response.
+
+```{r}
+# Initialize some parameters
+parallel <- F
+n1 <- 20
+# Simulate the new coming data
+x_new <- matrix(rnorm(n1*p), n1, p)
+eps_new <- rnorm(n1)
+y_new <- x_new %*% beta + eps_new
+# Do prediction based on the Gradient Boosting
+multipre_graboo <- prediction(x_new, model_graboo$model_train, parallel)
+pre_graboo <- Comb_parallel(multipre_graboo, weights)
+```
+
+
+
+
+
+
