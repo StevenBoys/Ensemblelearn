@@ -24,7 +24,7 @@ fweak <- function(x, y, last_est){
   lm(y ~ -1 + x, weights = last_est)$coefficients
 }
 data <- list(x = matrix(rnorm(1000), 200, 5))
-data$y <- data$x \%*\% rnorm(5)
+data$y <- data$x \%*\% rnorm(5) + rnorm(200, 0, 3)
 data$last_est <- rep(1/length(data$y), length(data$y))
 model_num <- 100
 Adaboost(fweak, data, model_num)

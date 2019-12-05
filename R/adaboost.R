@@ -11,7 +11,7 @@
 #'   lm(y ~ -1 + x, weights = last_est)$coefficients
 #' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
-#' data$y <- data$x %*% rnorm(5)
+#' data$y <- data$x %*% rnorm(5) + rnorm(200, 0, 3)
 #' data$last_est <- rep(1/length(data$y), length(data$y))
 #' adaboost_fit1(fweak, data)
 adaboost_fit1 <- function(fweak, data){
@@ -45,7 +45,7 @@ adaboost_fit1 <- function(fweak, data){
 #'   lm(y ~ -1 + x, weights = last_est)$coefficients
 #' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
-#' data$y <- data$x %*% rnorm(5)
+#' data$y <- data$x %*% rnorm(5) + rnorm(200, 0, 3)
 #' data$last_est <- rep(1/length(data$y), length(data$y))
 #' model_num <- 100
 #' Adaboost(fweak, data, model_num)
@@ -63,6 +63,7 @@ Adaboost <- function(fweak, data, model_num){
     errors[i] <- fit1$error
   }
   # Calculate the weights of combining the weak models based on the errors
+  weights <- log(1 + 1/errors)
   weights <- weights / sum(weights)
   # Get the multiple estimation based on the trained models
   multi_est <- prediction(data$x, model_train, parallel = T)
