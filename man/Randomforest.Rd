@@ -4,19 +4,17 @@
 \alias{Randomforest}
 \title{Function that implement the algorithm of Ensemble learning in Random Forest}
 \usage{
-Randomforest(data, model_num, reg, fweak = dt_reg)
+Randomforest(data, model_num, fweak = dt_reg)
 }
 \arguments{
 \item{data}{- list of data that fweak need}
 
 \item{model_num}{- the number of weak models you want to train and combine}
 
-\item{reg}{- logical value, true if the weak model is doing regression, otherwise it's doing classification}
-
 \item{fweak}{- function that generates estimate from weak model based on input}
 }
 \value{
-bagging(fweak, data, model_num, reg)
+bagging(fweak, data, model_num)
 }
 \description{
 Function that implement the algorithm of Ensemble learning in Random Forest
@@ -24,6 +22,6 @@ Function that implement the algorithm of Ensemble learning in Random Forest
 \examples{
 data <- list(x = matrix(rnorm(1000), 200, 5))
 data$y <- data$x \%*\% rnorm(5)
-model_num <- 100; reg <- T
-Randomforest(data, model_num, reg)
+model_num <- 100
+Randomforest(data, model_num)
 }

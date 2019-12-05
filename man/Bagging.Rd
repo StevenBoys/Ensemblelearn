@@ -4,7 +4,7 @@
 \alias{Bagging}
 \title{Function that implement the algorithm of Ensemble learning in Bagging}
 \usage{
-Bagging(fweak, data, model_num, reg)
+Bagging(fweak, data, model_num)
 }
 \arguments{
 \item{fweak}{- function that generates estimate from weak model based on input}
@@ -12,11 +12,9 @@ Bagging(fweak, data, model_num, reg)
 \item{data}{- list of data that fweak need}
 
 \item{model_num}{- the number of weak models you want to train and combine}
-
-\item{reg}{- logical value, true if the weak model is doing regression, otherwise it's doing classification}
 }
 \value{
-bagging(fweak, data, model_num, reg)
+bagging(fweak, data, model_num)
 }
 \description{
 Function that implement the algorithm of Ensemble learning in Bagging
@@ -27,6 +25,6 @@ fweak <- function(x, y){
 }
 data <- list(x = matrix(rnorm(1000), 200, 5))
 data$y <- data$x \%*\% rnorm(5)
-model_num <- 100; reg <- T
-Bagging(fweak, data, model_num, reg)
+model_num <- 100
+Bagging(fweak, data, model_num)
 }

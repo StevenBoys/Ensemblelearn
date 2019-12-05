@@ -4,15 +4,12 @@
 \alias{Graboo}
 \title{Function that implement the algorithm of Ensemble learning in Gradient Boosting}
 \usage{
-Graboo(data, model_num, reg, loss = mse, eta = 0.1,
-  fweak = graboo_reg)
+Graboo(data, model_num, loss = mse, eta = 0.1, fweak = graboo_reg)
 }
 \arguments{
 \item{data}{- list of data that fweak need including x, y and last_est}
 
 \item{model_num}{- the number of weak models you want to train and combine}
-
-\item{reg}{- logical value, true if the weak model is doing regression, otherwise it's doing classification}
 
 \item{loss}{- the loss function used, its default value is the mean of the square error}
 
@@ -21,7 +18,7 @@ Graboo(data, model_num, reg, loss = mse, eta = 0.1,
 \item{fweak}{- function that generates estimate from weak model based on input, its default value is graboo_reg}
 }
 \value{
-Graboo(fweak, data, model_num, reg)
+Graboo(fweak, data, model_num)
 }
 \description{
 Function that implement the algorithm of Ensemble learning in Gradient Boosting
@@ -30,6 +27,6 @@ Function that implement the algorithm of Ensemble learning in Gradient Boosting
 data <- list(x = matrix(rnorm(1000), 200, 5))
 data$y <- data$x \%*\% rnorm(5)
 data$last_est <- rep(0, 5)
-model_num <- 100; reg <- T
-Graboo(data, model_num, reg)
+model_num <- 100
+Graboo(data, model_num)
 }

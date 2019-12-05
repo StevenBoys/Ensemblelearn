@@ -62,11 +62,13 @@ Adaboost <- function(fweak, data, model_num){
     data$last_est <- fit1$weights
     errors[i] <- fit1$error
   }
-  # Get the fitted values based on the trained models
-  comb_out <- prediction(data$x, model_train, parallel = T)
   # Calculate the weights of combining the weak models based on the errors
   weights <- log((max(errors) + 1 - errors) / errors)
   weights <- weights / sum(weights)
+  # Get the multiple estimation based on the trained models
+  multi_est <- prediction(data$x, model_train, parallel = T)
+  # Combine the multiple estimation
+  comb_out <- Comb_parallel(multi_est, weights)
   # Return the fitted values on training data, the list of weak models and the weights for combining the weak models
   list(fitted_values = comb_out, model_train = model_train, weights = weights)
 }

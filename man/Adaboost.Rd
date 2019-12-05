@@ -4,7 +4,7 @@
 \alias{Adaboost}
 \title{Function that implement the algorithm of Ensemble learning in AdaBoost}
 \usage{
-Adaboost(fweak, data, model_num, reg)
+Adaboost(fweak, data, model_num)
 }
 \arguments{
 \item{fweak}{- function that generates estimate from weak model based on input}
@@ -12,11 +12,9 @@ Adaboost(fweak, data, model_num, reg)
 \item{data}{- list of data that fweak need including x, y and last_est}
 
 \item{model_num}{- the number of weak models you want to train and combine}
-
-\item{reg}{- logical value, true if the weak model is doing regression, otherwise it's doing classification}
 }
 \value{
-Adaboost(fweak, data, model_num, reg)
+Adaboost(fweak, data, model_num)
 }
 \description{
 Function that implement the algorithm of Ensemble learning in AdaBoost
@@ -28,6 +26,6 @@ fweak <- function(x, y, last_est){
 data <- list(x = matrix(rnorm(1000), 200, 5))
 data$y <- data$x \%*\% rnorm(5)
 data$last_est <- rep(1/length(data$y), length(data$y))
-model_num <- 100; reg <- T
-Adaboost(fweak, data, model_num, reg)
+model_num <- 100
+Adaboost(fweak, data, model_num)
 }

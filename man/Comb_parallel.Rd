@@ -4,14 +4,12 @@
 \alias{Comb_parallel}
 \title{Function that combines results from weak models in parallel}
 \usage{
-Comb_parallel(multi_est, weights, reg)
+Comb_parallel(multi_est, weights)
 }
 \arguments{
 \item{multi_est}{- list containing multiple estimates from weak models}
 
 \item{weights}{- nonegative vector that combines the multiple estimates}
-
-\item{reg}{- logical value, true if the weak model is doing regression, otherwise it's doing classification}
 }
 \value{
 outputs Comb_parallel(multi_est, weights),
@@ -22,6 +20,5 @@ Function that combines results from weak models in parallel
 \examples{
 multi_est <- list(1, 2, 3)
 weights <- c(0.2, 0.4, 0.4)
-reg <- T
-Comb_parallel(multi_est, weights, reg)
+Comb_parallel(multi_est, weights)
 }

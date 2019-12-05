@@ -12,11 +12,9 @@ prediction(x, model_train, parallel)
 \item{model_train}{- the list of models trained on the training data}
 
 \item{parallel}{- logical value, true if its results will be combined in parallel}
-
-\item{reg}{- logical value, true if the weak model is doing regression, otherwise it's doing classification}
 }
 \value{
-outputs prediction(x, model_train, reg, parallel)
+outputs prediction(x, model_train, parallel)
 }
 \description{
 Function that does prediction based on the fitted models for the new coming data
@@ -27,5 +25,5 @@ y <- x \%*\% rnorm(5)
 parallel <- TRUE
 model_train <- list(); model_train[[1]] <- lm(y ~ -1 + x)$coefficients
 x_new <- matrix(rnorm(5), 1, 5)
-prediction(x_new, model_train, reg, parallel)
+prediction(x_new, model_train, parallel)
 }
