@@ -227,7 +227,7 @@ Adaboost is different from the two we talked above. The multiple weak models of 
 
 We can use the function `Adaboost` to build the Adaboost model. It needs three inputs including the weak model `fweak`, `data` and `model_num`, which is the same with the previous model. But the structure of `data` is a little bit different. It is list of three parts consisting of independent variables `x`, response `y` and the weights of the samples `last_est` which is the output of the previous weak model.
 
-We keep use the dataset simulated above. As the weak model, we use the weighted linear regression model here.
+We keep using the dataset simulated above. As the weak model, we use the weighted linear regression model here.
 
 ```{r}
 # Build a weak model for Adaboost
@@ -253,6 +253,22 @@ ggplot(results, aes(x = y, y = fitted_value)) +
 geom_point(size = 3, alpha = 0.7)
 ```
 
+And if there is a new coming data, we can do prediction about the unknown response.
+
+```{r}
+# Initialize some parameters
+parallel <- T
+n1 <- 20
+# Simulate the new coming data
+x_new <- matrix(rnorm(n1*p), n1, p)
+eps_new <- rnorm(n1)
+y_new <- x_new %*% beta + eps_new
+# Do prediction based on the Adaboost model
+multi_est <- prediction(x_new, model_adaboost$model_train, parallel)
+pre_adaboost <- Comb_parallel(multi_est, model_adaboost$weights)
+```
+
+
 ### Gradient Boosting
 
 Gradient Boosting is another popular Boosting model. In the model, firstly, we train a weak model based on the training dataset. And we add the multiply a small step size with the estimate and add it into the final estimate whose initial values are all zero. Then we calculate the negative gradient of the loss function, which we should specify in the input parameter and its default value is function `mse` that can calculate mean square errors. 
@@ -263,7 +279,7 @@ Based on the descripsion above, we can see that the weak models in Gradient Boos
 
 We can use the function `Graboo` to build the Gradient Boosting model. It needs five input parameters including the `data`, `model_num`, loss function `loss` whose default value is `mse`, the small step size `eta` whose default value is 0.1 and the weak model `fweak` whose default value is `graboo_reg`. 
 
-We keep use the dataset simulated above. As the weak model, we use the default value.
+We keep using the dataset simulated above. As the weak model, we use the default value.
 
 ```{r}
 # Initialize the last_est in the list of data
@@ -294,12 +310,42 @@ x_new <- matrix(rnorm(n1*p), n1, p)
 eps_new <- rnorm(n1)
 y_new <- x_new %*% beta + eps_new
 # Do prediction based on the Gradient Boosting
-multipre_graboo <- prediction(x_new, model_graboo$model_train, parallel)
-pre_graboo <- Comb_parallel(multipre_graboo, weights)
+pre_graboo <- prediction(x_new, model_graboo$model_train, parallel)
 ```
 
+## User-defined Ensemble Learning
 
+R package [**Ensemblelearn**](https://github.com/StevenBoys/Ensemblelearn) also allow users to define their own Ensemble Learning algorithms and help users to do the model training and prediction.
 
+In order to do this, we need to use function `Ensemble_define`. I needs five input parameters, including `data`, `parallel`, `fit_fun` which is a user-defined function implementing one fweak model, `fweak` and `model_num`. And as for the `data`, it should include `x` and `y` when `parallel` is `TRUE` otherwise it should include `x`, `y` and `last_est`. As for `fit_fun`, it should return both the trained `model` and the updated `last_est` if `parallel` is False.
 
+Let's change the functions of Gradient Boosting to a user-defined Ensemble Learning algorithm. And we keep using the dataset simulated above.
+
+```{r}
+# Set the value of parallel for Gradient Boosting
+parallel <- FALSE
+# Define fit_fun based on graboo_fit1
+fit_fun <- function(data, fweak){
+  # Fit a Gradient Boosting fweak
+  fit <- graboo_fit1(data = data, fweak = fweak)
+  # Update the value of last_est
+  last_est <- fit(diag(rep(1, ncol(data$x))))
+  list(model = fit, last_est = last_est)
+}
+# Set the fweak
+fweak <- graboo_reg
+# Set the number of weak models we want to train
+model_num <- 100
+# Build the user-defined model
+model_user_define <- Ensemble_define(data, parallel, fit_fun, fweak, model_num)
+```
+
+## References
+
+[1] Bartosz Krawczyk, Leandro L.Minku, João Gama, Jerzy Stefanowski, and Michał Woźniak. Ensemble learning for data stream analysis: A survey. Information Fusion, 37:132–156, 2017.
+
+[2] Omer Sagi and Lior Rokach. Ensemble learning: A survey. WIREs, 8, 2018.
+
+[3] Wikipedia. Ensemble learning. https://en.wikipedia.org/wiki/Ensemble_learning.
 
 
