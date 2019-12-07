@@ -8,6 +8,8 @@ This package include lots of popular Ensemble Learning algorithm like Bagging, R
 
 And it also provides the framework for people to define their specific ensemble learning algorithm and help people to compute the results. People can define the weak models as well as the way of combining them. There are two ways of combining the weak models. One is parallel and one is series. The output of parallel is always a weighted sum of the outputs of the weak models. As for the series, the output of the last weak model will be the input of the next weak model.
 
+There are some brief instructions about using this package. And you can **check the vignette in the package to see the detailed description about it.**
+
 ## Installation
 
 ```
