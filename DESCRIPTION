@@ -13,7 +13,8 @@ Description: Ensemble Learning build multiple models or use multiple learning al
 License: GPL-2
 Encoding: UTF-8
 Imports: 
-    rpart
+    rpart,
+    prettydoc
 RoxygenNote: 6.1.1
 Suggests: 
     knitr,

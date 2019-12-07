@@ -56,23 +56,21 @@ fit_model <- function(fweak, parallel, data){
     # Check the compatibility of the data based on parameter parallel
     if(mean(c("y", "x") %in% names(data)) < 1){
       stop("The list of data should include x and y.")
-    }else if(length(y) != nrow(x)){
+    }else if(length(data$y) != nrow(data$x)){
       # Check the compatibility of the dimension of x and y
       stop("The dimension of y is not compatible with that of x.")
     }
-    x <- as.matrix(data$x); y <- data$y
-    fweak_value <- fweak(x, y)
+    fweak_value <- fweak(as.matrix(data$x), data$y)
   }else{
     # Check the compatibility of the data based on parameter parallel
     if(mean(c("y", "x", "last_est") %in% names(data)) < 1){
       stop("The list of data should include x, y and last_est.")
-    }else if(length(y) != nrow(x)){
+    }else if(length(data$y) != nrow(data$x)){
       # Check the compatibility of the dimension of x and y
       stop("The dimension of y is not compatible with that of x.")
     }
     # When fweak's results will be combined in series
-    x <- data$x; y <- data$y; last_est <- data$last_est
-    fweak_value <- fweak(x, y, last_est)
+    fweak_value <- fweak(data$x, data$y, data$last_est)
   }
   # Return the new fitted value
   return(fweak_value)

@@ -11,7 +11,7 @@ Ensemble_define(data, parallel, fit_fun, fweak, model_num)
 
 \item{parallel}{- logical value, true if its results will be combined in parallel}
 
-\item{fit_fun}{- function that implement one fweak in the user-defined Ensemble Learning: if parallel is False, it should return both the fitted value and the updated last_est}
+\item{fit_fun}{- function that implement one fweak in the user-defined Ensemble Learning: if parallel is False, it should return both the trained model and the updated last_est}
 
 \item{fweak}{- function that generates estimate from weak model based on input}
 
