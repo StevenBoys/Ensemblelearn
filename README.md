@@ -12,7 +12,7 @@ And it also provides the framework for people to define their specific ensemble 
 
 ```
 require(devtools)
-devtools::install_github("StevenBoys/Ensemblelearn")
+devtools::install_github("StevenBoys/Ensemblelearn", build_vignettes = T)
 ```
 
 ## Usage
