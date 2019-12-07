@@ -3,7 +3,7 @@
 #' @param fweak - function that generates estimate from weak model based on input
 #' @param data - list of data that fweak need
 #'
-#' @return outputs bagging_fit1(fweak, data)
+#' @return A trained model function based on the one implementation of the weak model, whose input is the independent variables.
 #' @export
 #'
 #' @examples
@@ -36,7 +36,9 @@ bagging_fit1 <- function(fweak, data){
 #' @param data - list of data that fweak need
 #' @param model_num - the number of weak models you want to train and combine
 #'
-#' @return bagging(fweak, data, model_num)
+#' @return A list of
+#'        \item{fitted_value}{ - fitted value on the training dataset based on the trained model}
+#'        \item{model_train}{ - a list of trained weak models}
 #' @export
 #'
 #' @examples

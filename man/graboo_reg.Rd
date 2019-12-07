@@ -18,7 +18,7 @@ graboo_reg(x, y, last_est, loss = mse, eta = 0.1)
 \item{eta}{- the step size we use to update the total estimate each time, its default value is 0.1}
 }
 \value{
-graboo_reg(x ,y)
+The trained results of weak model on Gradient Boosting.
 }
 \description{
 Function that builds weak model on Gradient Boosting for regression task

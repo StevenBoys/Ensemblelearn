@@ -14,7 +14,7 @@ randomforest_fit1(data, fweak = dt_reg, fea_len = NULL)
 \item{fea_len}{- the number of features we sample each time, its default value is null}
 }
 \value{
-outputs randomforest_fit1(fweak, data)
+A trained model function based on the one implementation of the weak model, whose input is the independent variables.
 }
 \description{
 Function that implement one weak model of Random Forest based on the resample of the features

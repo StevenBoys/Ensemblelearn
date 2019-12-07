@@ -6,7 +6,9 @@
 #' @param fweak - function that generates estimate from weak model based on input
 #' @param model_num - the number of weak models you want to train and combine
 #'
-#' @return outputs Ensemble_define(data, parallel, fit_fun, fweak, model_num),
+#' @return A list of
+#'        \item{fitted_value}{ - fitted value on the training dataset based on the trained model}
+#'        \item{model_train}{ - a list of trained weak models}
 #' @export
 #'
 #' @examples

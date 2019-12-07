@@ -12,7 +12,7 @@ Comb_parallel(multi_est, weights)
 \item{weights}{- nonegative vector that combines the multiple estimates}
 }
 \value{
-outputs Comb_parallel(multi_est, weights),
+The combined result for the Ensemble Learning in parallel.
 }
 \description{
 Function that combines results from weak models in parallel

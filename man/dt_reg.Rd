@@ -12,7 +12,7 @@ dt_reg(x, y)
 \item{y}{- input dependent variable y for the traisning}
 }
 \value{
-dt_reg(x ,y)
+The trained Decision Tree model based on the input data.
 }
 \description{
 Function that builds weak model on Decision Tree for regression task

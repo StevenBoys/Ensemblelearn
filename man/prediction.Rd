@@ -14,7 +14,7 @@ prediction(x, model_train, parallel)
 \item{parallel}{- logical value, true if its results will be combined in parallel}
 }
 \value{
-outputs prediction(x, model_train, parallel)
+The multiple estimation based on the multiple weak models if in parallel, otherwise the final estimation.
 }
 \description{
 Function that does prediction based on the fitted models for the new coming data

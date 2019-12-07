@@ -12,7 +12,7 @@ bagging_fit1(fweak, data)
 \item{data}{- list of data that fweak need}
 }
 \value{
-outputs bagging_fit1(fweak, data)
+A trained model function based on the one implementation of the weak model, whose input is the independent variables.
 }
 \description{
 Function that implement one resample of Bagging in regression

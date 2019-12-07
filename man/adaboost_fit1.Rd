@@ -12,7 +12,7 @@ adaboost_fit1(fweak, data)
 \item{data}{- list of data that fweak need including x, y and last_est which is the sample weight for this step}
 }
 \value{
-outputs boosting_fit1(fweak, data)
+A trained model function based on the one implementation of the weak model, whose input is the independent variables.
 }
 \description{
 Function that implement one weak model step of AdaBoost in regression

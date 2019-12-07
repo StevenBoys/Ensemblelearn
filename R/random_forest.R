@@ -3,7 +3,7 @@
 #' @param x - input independent variables x for the training
 #' @param y - input dependent variable y for the traisning
 #'
-#' @return dt_reg(x ,y)
+#' @return The trained Decision Tree model based on the input data.
 #' @export
 #'
 #' @examples
@@ -22,7 +22,7 @@ dt_reg <- function(x, y){
 #' @param fweak - function that generates estimate from weak model based on input, its default value is dt_reg
 #' @param fea_len - the number of features we sample each time, its default value is null
 #'
-#' @return outputs randomforest_fit1(fweak, data)
+#' @return A trained model function based on the one implementation of the weak model, whose input is the independent variables.
 #' @export
 #'
 #' @examples
@@ -64,7 +64,9 @@ randomforest_fit1 <- function(data, fweak = dt_reg, fea_len = NULL){
 #' @param model_num - the number of weak models you want to train and combine
 #' @param fweak - function that generates estimate from weak model based on input
 #'
-#' @return Randomforest(data, model_num)
+#' @return A list of
+#'        \item{fitted_value}{ - fitted value on the training dataset based on the trained model}
+#'        \item{model_train}{ - a list of trained weak models}
 #' @export
 #'
 #' @examples
@@ -94,3 +96,5 @@ Randomforest <- function(data, model_num, fweak = dt_reg){
   # Return the fitted values on training data and the list of weak models
   list(fitted_values = comb_out, model_train = model_train)
 }
+
+

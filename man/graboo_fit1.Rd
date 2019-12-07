@@ -16,7 +16,7 @@ graboo_fit1(data, fweak = graboo_reg, loss = mse, eta = 0.1)
 \item{eta}{- the step size we use to update the total estimate each time, its default value is 0.1}
 }
 \value{
-outputs graboo_fit1(fweak, data)
+A trained model function based on the one implementation of the weak model, whose input is the independent variables.
 }
 \description{
 Function that implement one weak model step of Gradient Boosting in regression

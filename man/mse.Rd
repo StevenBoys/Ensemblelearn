@@ -12,7 +12,7 @@ mse(y, y_hat)
 \item{y_hat}{- the estimate of the dependent variable}
 }
 \value{
-outputs mse(y, y_hat)
+The mean square errors.
 }
 \description{
 Function that calculate the mse of dependent variable and its estimate

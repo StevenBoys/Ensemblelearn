@@ -18,7 +18,7 @@ nega_gra(loss, x, y, coef, eps = 0.001)
 \item{eps}{- the small increase used in the calculation of gradient}
 }
 \value{
-outputs nega_gra(loss, x, y, coef)
+The negative gradient value of the given loss function.
 }
 \description{
 Function that calculate the negative gradient of given loss function

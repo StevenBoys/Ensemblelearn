@@ -3,7 +3,7 @@
 #' @param multi_est - list containing multiple estimates from weak models
 #' @param weights - nonegative vector that combines the multiple estimates
 #'
-#' @return outputs Comb_parallel(multi_est, weights),
+#' @return The combined result for the Ensemble Learning in parallel.
 #' @export
 #'
 #' @examples
@@ -39,7 +39,7 @@ Comb_parallel <- function(multi_est, weights){
 #' @param parallel - logical value, true if its results will be combined in parallel
 #' @param data - list of data that fweak need
 #'
-#' @return outputs fit_model(fweak, parallel, data)
+#' @return The new trained results based on the weak model.
 #' @export
 #'
 #' @examples
@@ -72,7 +72,7 @@ fit_model <- function(fweak, parallel, data){
     # When fweak's results will be combined in series
     fweak_value <- fweak(data$x, data$y, data$last_est)
   }
-  # Return the new fitted value
+  # Return the new trained results
   return(fweak_value)
 }
 
@@ -82,7 +82,7 @@ fit_model <- function(fweak, parallel, data){
 #' @param model_train - the list of models trained on the training data
 #' @param parallel - logical value, true if its results will be combined in parallel
 #'
-#' @return outputs prediction(x, model_train, parallel)
+#' @return The multiple estimation based on the multiple weak models if in parallel, otherwise the final estimation.
 #' @export
 #'
 #' @examples

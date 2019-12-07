@@ -3,7 +3,7 @@
 #' @param fweak - function that generates estimate from weak model based on input
 #' @param data - list of data that fweak need including x, y and last_est which is the sample weight for this step
 #'
-#' @return outputs boosting_fit1(fweak, data)
+#' @return A trained model function based on the one implementation of the weak model, whose input is the independent variables.
 #' @export
 #'
 #' @examples
@@ -37,7 +37,9 @@ adaboost_fit1 <- function(fweak, data){
 #' @param data - list of data that fweak need including x, y and last_est
 #' @param model_num - the number of weak models you want to train and combine
 #'
-#' @return Adaboost(fweak, data, model_num)
+#' @return A list of
+#'        \item{fitted_value}{ - fitted value on the training dataset based on the trained model}
+#'        \item{model_train}{ - a list of trained weak models}
 #' @export
 #'
 #' @examples

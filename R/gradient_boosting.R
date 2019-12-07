@@ -3,7 +3,7 @@
 #' @param y - the true dependent variable
 #' @param y_hat - the estimate of the dependent variable
 #'
-#' @return outputs mse(y, y_hat)
+#' @return The mean square errors.
 #' @export
 #'
 #' @examples
@@ -25,7 +25,7 @@ mse <- function(y, y_hat){
 #' @param coef - the estimate of the coefficients in regression
 #' @param eps - the small increase used in the calculation of gradient
 #'
-#' @return outputs nega_gra(loss, x, y, coef)
+#' @return The negative gradient value of the given loss function.
 #' @export
 #'
 #' @examples
@@ -51,7 +51,7 @@ nega_gra <- function(loss, x, y, coef, eps = 0.001){
 #' @param loss - the loss function used, its default value is the mean of the square error
 #' @param eta - the step size we use to update the total estimate each time, its default value is 0.1
 #'
-#' @return graboo_reg(x ,y)
+#' @return The trained results of weak model on Gradient Boosting.
 #' @export
 #'
 #' @examples
@@ -77,7 +77,7 @@ graboo_reg <- function(x, y, last_est, loss = mse, eta = 0.1){
 #' @param loss - the loss function used, its default value is the mean of the square error
 #' @param eta - the step size we use to update the total estimate each time, its default value is 0.1
 #'
-#' @return outputs graboo_fit1(fweak, data)
+#' @return A trained model function based on the one implementation of the weak model, whose input is the independent variables.
 #' @export
 #'
 #' @examples
@@ -109,7 +109,9 @@ graboo_fit1 <- function(data, fweak = graboo_reg, loss = mse, eta = 0.1){
 #' @param eta - the step size we use to update the total estimate each time, its default value is 0.1
 #' @param fweak - function that generates estimate from weak model based on input, its default value is graboo_reg
 #'
-#' @return Graboo(fweak, data, model_num)
+#' @return A list of
+#'        \item{fitted_value}{ - fitted value on the training dataset based on the trained model}
+#'        \item{model_train}{ - a list of trained weak models}
 #' @export
 #'
 #' @examples

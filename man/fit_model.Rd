@@ -14,7 +14,7 @@ fit_model(fweak, parallel, data)
 \item{data}{- list of data that fweak need}
 }
 \value{
-outputs fit_model(fweak, parallel, data)
+The new trained results based on the weak model.
 }
 \description{
 Function that gets results from weak model

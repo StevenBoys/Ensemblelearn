@@ -18,7 +18,9 @@ Graboo(data, model_num, loss = mse, eta = 0.1, fweak = graboo_reg)
 \item{fweak}{- function that generates estimate from weak model based on input, its default value is graboo_reg}
 }
 \value{
-Graboo(fweak, data, model_num)
+A list of
+       \item{fitted_value}{ - fitted value on the training dataset based on the trained model}
+       \item{model_train}{ - a list of trained weak models}
 }
 \description{
 Function that implement the algorithm of Ensemble learning in Gradient Boosting

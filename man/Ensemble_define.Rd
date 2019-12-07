@@ -18,7 +18,9 @@ Ensemble_define(data, parallel, fit_fun, fweak, model_num)
 \item{model_num}{- the number of weak models you want to train and combine}
 }
 \value{
-outputs Ensemble_define(data, parallel, fit_fun, fweak, model_num),
+A list of
+       \item{fitted_value}{ - fitted value on the training dataset based on the trained model}
+       \item{model_train}{ - a list of trained weak models}
 }
 \description{
 Function that combines results from weak models in parallel

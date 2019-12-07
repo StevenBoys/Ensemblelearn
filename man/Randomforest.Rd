@@ -14,7 +14,9 @@ Randomforest(data, model_num, fweak = dt_reg)
 \item{fweak}{- function that generates estimate from weak model based on input}
 }
 \value{
-Randomforest(data, model_num)
+A list of
+       \item{fitted_value}{ - fitted value on the training dataset based on the trained model}
+       \item{model_train}{ - a list of trained weak models}
 }
 \description{
 Function that implement the algorithm of Ensemble learning in Random Forest
