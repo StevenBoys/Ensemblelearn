@@ -14,14 +14,16 @@ Randomforest(data, model_num, fweak = dt_reg)
 \item{fweak}{- function that generates estimate from weak model based on input}
 }
 \value{
-bagging(fweak, data, model_num)
+Randomforest(data, model_num)
 }
 \description{
 Function that implement the algorithm of Ensemble learning in Random Forest
 }
 \examples{
-data <- list(x = matrix(rnorm(1000), 200, 5))
-data$y <- data$x \%*\% rnorm(5)
+x <- matrix(rnorm(4000), 200, 20)
+beta <- rnorm(5)
+y <- x[, 1:length(beta)] \%*\% beta + rnorm(200)
+data <- list(x = x, y = y)
 model_num <- 100
 Randomforest(data, model_num)
 }

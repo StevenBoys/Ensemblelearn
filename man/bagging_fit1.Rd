@@ -22,6 +22,6 @@ fweak <- function(x, y){
   lm(y ~ x)$coefficients
 }
 data <- list(x = matrix(rnorm(1000), 200, 5))
-data$y <- data$x \%*\% rnorm(5)
+data$y <- data$x \%*\% rnorm(5) + rnorm(200, 0, 3)
 bagging_fit1(fweak, data)
 }

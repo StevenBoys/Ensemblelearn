@@ -25,7 +25,7 @@ Function that implement the algorithm of Ensemble learning in Gradient Boosting
 }
 \examples{
 data <- list(x = matrix(rnorm(1000), 200, 5))
-data$y <- data$x \%*\% rnorm(5)
+data$y <- data$x \%*\% rnorm(5) + rnorm(200, 0, 3)
 data$last_est <- rep(0, 5)
 model_num <- 100
 Graboo(data, model_num)

@@ -10,6 +10,10 @@
 #' y <- rnorm(100); y_hat <- rep(0, 100)
 #' mse(y, y_hat)
 mse <- function(y, y_hat){
+  # Check the compatibility of y and yhat
+  if(length(y) != length(y_hat)){
+    stop("The length of y should be the same with that of yhat.")
+  }
   sum((y - y_hat) * (y - y_hat))
 }
 
@@ -69,26 +73,25 @@ graboo_reg <- function(x, y, last_est, loss = mse, eta = 0.1){
 #' Function that implement one weak model step of Gradient Boosting in regression
 #'
 #' @param data - list of data that fweak need
+#' @param fweak - function that generates estimate from weak model based on input, its default value is graboo_reg
 #' @param loss - the loss function used, its default value is the mean of the square error
 #' @param eta - the step size we use to update the total estimate each time, its default value is 0.1
 #'
-#' @return outputs boosting_fit1(fweak, data)
+#' @return outputs graboo_fit1(fweak, data)
 #' @export
 #'
 #' @examples
-#' fweak <- function(x, y){
-#'   lm(y ~ x)$coefficients
-#' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
-#' data$y <- data$x %*% rnorm(5)
-#' graboo_fit1(fweak, data)
-graboo_fit1 <- function(data, loss = mse, eta = 0.1){
+#' data$y <- data$x %*% rnorm(5) + rnorm(200, 0, 3)
+#' data$last_est <- rep(0, ncol(data$x))
+#' graboo_fit1(data)
+graboo_fit1 <- function(data, fweak = graboo_reg, loss = mse, eta = 0.1){
   # Set the fweak function based on the input
-  fweak <- function(x, y, last_est){
-    graboo_reg(x, y, last_est, loss = loss, eta = eta)
+  fweak_new <- function(x, y, last_est){
+    fweak(x, y, last_est, loss = loss, eta = eta)
   }
   # Fit the weak model
-  coef <- fit_model(fweak, F, data)
+  coef <- fit_model(fweak_new, F, data)
   # Construct the trained model based on the coef
   model_train <- function(x){
     x %*% coef
@@ -111,21 +114,17 @@ graboo_fit1 <- function(data, loss = mse, eta = 0.1){
 #'
 #' @examples
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
-#' data$y <- data$x %*% rnorm(5)
+#' data$y <- data$x %*% rnorm(5) + rnorm(200, 0, 3)
 #' data$last_est <- rep(0, 5)
 #' model_num <- 100
 #' Graboo(data, model_num)
 Graboo <- function(data, model_num, loss = mse, eta = 0.1, fweak = graboo_reg){
-  # Set the fweak function based on the input
-  fweak <- function(x, y, last_est){
-    graboo_reg(x, y, last_est, loss = mse, eta = eta)
-  }
   # Initialize multi_est for storing the fitting results of weak models
   model_train <- list()
   length(model_train) <- model_num
   # Fit the weak models
   for(i in 1:model_num){
-    model_train[[i]] <- graboo_fit1(data)
+    model_train[[i]] <- graboo_fit1(data, fweak)
     data$last_est <- model_train[[i]](diag(rep(1, ncol(data$x))))
   }
   # Get the fitted values based on the trained models

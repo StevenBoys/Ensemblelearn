@@ -4,26 +4,26 @@
 \alias{graboo_fit1}
 \title{Function that implement one weak model step of Gradient Boosting in regression}
 \usage{
-graboo_fit1(data, loss = mse, eta = 0.1)
+graboo_fit1(data, fweak = graboo_reg, loss = mse, eta = 0.1)
 }
 \arguments{
 \item{data}{- list of data that fweak need}
+
+\item{fweak}{- function that generates estimate from weak model based on input, its default value is graboo_reg}
 
 \item{loss}{- the loss function used, its default value is the mean of the square error}
 
 \item{eta}{- the step size we use to update the total estimate each time, its default value is 0.1}
 }
 \value{
-outputs boosting_fit1(fweak, data)
+outputs graboo_fit1(fweak, data)
 }
 \description{
 Function that implement one weak model step of Gradient Boosting in regression
 }
 \examples{
-fweak <- function(x, y){
-  lm(y ~ x)$coefficients
-}
 data <- list(x = matrix(rnorm(1000), 200, 5))
-data$y <- data$x \%*\% rnorm(5)
-graboo_fit1(fweak, data)
+data$y <- data$x \%*\% rnorm(5) + rnorm(200, 0, 3)
+data$last_est <- rep(0, ncol(data$x))
+graboo_fit1(data)
 }

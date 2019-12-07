@@ -21,10 +21,10 @@ Function that gets results from weak model
 }
 \examples{
 fweak <- function(x, y){
-  lm(y ~ x)$coefficients
+  lm(y ~ -1 + x)$coefficients
 }
 data <- list(x = matrix(rnorm(1000), 200, 5))
 parallel <- TRUE
-data$y <- data$x \%*\% rnorm(5)
+data$y <- data$x \%*\% rnorm(5) + rnorm(200, 0, 3)
 fit_model(fweak, parallel, data)
 }

@@ -50,6 +50,10 @@ adaboost_fit1 <- function(fweak, data){
 #' model_num <- 100
 #' Adaboost(fweak, data, model_num)
 Adaboost <- function(fweak, data, model_num){
+  # Check the compatibility of model_num
+  if(model_num <= 0){
+    stop("The value of model_num should be positive.")
+  }
   # Initialize multi_est for storing the fitting results of weak models
   model_train <- list()
   length(model_train) <- model_num

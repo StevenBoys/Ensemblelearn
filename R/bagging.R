@@ -11,7 +11,7 @@
 #'   lm(y ~ x)$coefficients
 #' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
-#' data$y <- data$x %*% rnorm(5)
+#' data$y <- data$x %*% rnorm(5) + rnorm(200, 0, 3)
 #' bagging_fit1(fweak, data)
 bagging_fit1 <- function(fweak, data){
   # Get the resample index
@@ -44,10 +44,14 @@ bagging_fit1 <- function(fweak, data){
 #'   lm(y ~ -1 + x)$coefficients
 #' }
 #' data <- list(x = matrix(rnorm(1000), 200, 5))
-#' data$y <- data$x %*% rnorm(5)
+#' data$y <- data$x %*% rnorm(5) + rnorm(200, 0, 3)
 #' model_num <- 100
 #' Bagging(fweak, data, model_num)
 Bagging <- function(fweak, data, model_num){
+  # Check the compatibility of model_num
+  if(model_num <= 0){
+    stop("The value of model_num should be positive.")
+  }
   # Initialize multi_est for storing the fitting results of weak models
   model_train <- list()
   length(model_train) <- model_num

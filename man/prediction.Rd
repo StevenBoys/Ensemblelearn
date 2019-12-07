@@ -21,9 +21,14 @@ Function that does prediction based on the fitted models for the new coming data
 }
 \examples{
 x = matrix(rnorm(1000), 200, 5)
-y <- x \%*\% rnorm(5)
+y <- x \%*\% rnorm(5) + rnorm(200, 0, 3)
 parallel <- TRUE
-model_train <- list(); model_train[[1]] <- lm(y ~ -1 + x)$coefficients
+coef <- lm(y ~ -1 + x)$coefficients
+model_train <- list()
+model_train[[1]] <- function(x){
+  x <- matrix(x, ncol = length(coef))
+  x \%*\% coef
+}
 x_new <- matrix(rnorm(5), 1, 5)
 prediction(x_new, model_train, parallel)
 }

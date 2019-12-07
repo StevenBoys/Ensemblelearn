@@ -3,6 +3,7 @@
 export(Adaboost)
 export(Bagging)
 export(Comb_parallel)
+export(Ensemble_define)
 export(Graboo)
 export(Randomforest)
 export(adaboost_fit1)

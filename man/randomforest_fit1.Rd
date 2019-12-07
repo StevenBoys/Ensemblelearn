@@ -20,7 +20,9 @@ outputs randomforest_fit1(fweak, data)
 Function that implement one weak model of Random Forest based on the resample of the features
 }
 \examples{
-data <- list(x = matrix(rnorm(1000), 200, 5))
-data$y <- data$x \%*\% rnorm(5)
-bagging_fit1(fweak, data)
+x <- matrix(rnorm(4000), 200, 20)
+beta <- rnorm(5)
+y <- x[, 1:length(beta)] \%*\% beta + rnorm(200)
+data <- list(x = x, y = y)
+randomforest_fit1(data)
 }
